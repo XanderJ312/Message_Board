@@ -8,15 +8,18 @@ const Login = () => {
     const [error, setError] = useState("")
 
     const handleChange = ({ currentTarget: input }) => {
-        setData({ ...data, [input.name]: input.value })
-    };
+        setData({ ...data, [input.name]: input.value });
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
             const url = "http://localhost:8080/api/auth"
             const { data: res } = await axios.post(url, data)
-            localStorage.setItem("token", res.data)
+            console.log(res);
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem("name", res.data.name);
+            localStorage.setItem("userID", res.data.userID);
             window.location = "/"
         } catch (error) {
             if (
@@ -72,3 +75,4 @@ const Login = () => {
 }
 
 export default Login;
+

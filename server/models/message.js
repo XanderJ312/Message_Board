@@ -2,9 +2,11 @@ const mongoose = require("mongoose")
 const jwt = require("jsonwebtoken")
 const Joi = require("joi")
 const passwordComplexity = require("joi-password-complexity")
+
 const messageSchema = new mongoose.Schema({
-    userID: { type: mongoose.Mongoose.Schema.Types.ObjectID, required: true },
+    userID: { type: mongoose.Schema.Types.ObjectId, required: true },
     publicationDate: { type: Date, required: true },
+    publicationTime: { type: String, required: true },
     content: { type: String, required: true },
 })
 
@@ -19,13 +21,12 @@ const Message = mongoose.model("Message", messageSchema)
 
 const validate = (data) => {
     const schema = Joi.object({
-      userID: Joi.string().required(),
-      publicationDate: Joi.date().required(),
-      content: Joi.string().required().label("Message"),
-    });
-    return schema.validate(data);
-  };
-  
+        userID: Joi.string().required(),
+        publicationDate: Joi.date().required(),
+        publicationTime: Joi.string().required(),
+        content: Joi.string().required().label("Message"),
+    })
+    return schema.validate(data)
+}
 
 module.exports = { Message, validate }
-    
