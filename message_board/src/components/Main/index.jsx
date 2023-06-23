@@ -1,27 +1,41 @@
 import { useState, useEffect } from "react";
 import styles from "./styles.module.css";
+import Menu from "../Menu/menu";
+
 
 const Main = () => {
     const [showMessageInput, setShowMessageInput] = useState(false);
     const [messageText, setMessageText] = useState('');
     const [name, setName] = useState("");
     const [ID, setID] = useState("");
+    const [surname, setSurname] = useState("");
+    const [userEmail, setEmail] = useState("");
     const [messages, setMessages] = useState([]);
+    const [menuActive, setMenuActive] = useState(false);
+    const items = [
+        {value: "All Messages", href: '/', icon: "Forum"},
+        {value: "My Messages", href: '/my_messages', icon: "Contact Mail"},
+        {value: "Profile", href: '/profile', icon: "Person"},
+    ]
 
     useEffect(() => {
         const userName = localStorage.getItem("name");
         const userID = localStorage.getItem("userID");
+        const userSurname = localStorage.getItem("surname");
+        const userEmail = localStorage.getItem("userEmail");
         setName(userName);
         setID(userID);
+        setSurname(userSurname);
+        setEmail(userEmail);
 
         fetch("http://localhost:8080/api/messages")
-      .then((response) => response.json())
-      .then((data) => {
-        setMessages(data);
-      })
-      .catch((error) => {
-        console.error("Failed to fetch messages:", error);
-      });
+            .then((response) => response.json())
+            .then((data) => {
+                setMessages(data);
+            })
+        .catch((error) => {
+            console.error("Failed to fetch messages:", error);
+        });
     }, []); 
 
     const handleAddMessage = () => {
@@ -79,7 +93,12 @@ const Main = () => {
     return (
         <div className={styles.main_container}>
             <nav className={styles.navbar}>
-                <h1>Message Board</h1>
+                <div className={styles.logo_and_menu}>
+                    <span className={`material-icons ${styles.menuBtn}`} onClick={() => setMenuActive(!menuActive)}>
+                        menu
+                    </span>
+                    <h1>Message Board</h1>
+                </div>
                 {name && <h1>Welcome, {name}</h1>}
                 <button className={styles.white_btn} onClick={handleLogout}>
                 Logout
@@ -107,14 +126,15 @@ const Main = () => {
                 )}
             </div>
             <div className={styles.messageList}>
-        {messages.map((message) => (
-          <div key={message._id} className={styles.messageItem}>
-            <p>{message.content}</p>
-            <p>{message.publication_date}</p>
-            <p>{message.publication_time}</p>
-          </div>
-        ))}
-      </div>
+                {messages.map((message) => (
+                    <div key={message._id} className={styles.messageItem}>
+                        <p>{message.content}</p>
+                        <p>{message.publication_date}</p>
+                        <p>{message.publication_time}</p>
+                    </div>
+                ))}
+            </div>
+            <Menu active={menuActive} setActive={setMenuActive} items={items}/>
         </div>
     );
 };
